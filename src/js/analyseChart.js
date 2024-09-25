@@ -117,6 +117,23 @@ function convertToTimed(course) {
                         imo = true;
                     }
                     break;
+
+                case 'C':
+                    note.type = 'mine';
+                    break;
+                
+                case 'D':
+                    note.type = 'fuse';
+                    note.count = course.headers.balloon[balloon++];
+                    break;
+                
+                case 'F':
+                    note.type = 'adlib';
+                    break;
+                
+                case 'G':
+                    note.type = 'kadon';
+                    break;
             }
 
             if (note.type) notes.push(note);
@@ -136,16 +153,17 @@ function getStatistics(course) {
     // renda length, balloon speed
     // potential score, score equations, recommended score variables
 
-    const notes = [0, 0, 0, 0], rendas = [], balloons = [];
+    const notes = [0, 0, 0, 0, 0], rendas = [], balloons = [];
+    let adlibs = 0, mines = 0;
     let start = 0, end = 0, combo = 0;
-    let rendaStart = false, balloonStart = false, balloonCount = 0, balloonGogo = 0;
+    let rendaStart = false, balloonStart = false, balloonCount = 0, balloonGogo = 0, balloonType = "balloon";
     let scCurEventIdx = 0, scCurEvent = course.events[scCurEventIdx];
     let scGogo = 0;
     let scNotes = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]];
     let scBalloon = [0, 0], scBalloonPop = [0, 0];
     let scPotential = 0;
 
-    const typeNote = ['don', 'kat', 'donBig', 'katBig'];
+    const typeNote = ['don', 'kat', 'donBig', 'katBig', 'kadon'];
 
     for (let i = 0; i < course.notes.length; i++) {
         const note = course.notes[i];
@@ -168,7 +186,7 @@ function getStatistics(course) {
             notes[v1] += 1;
             combo += 1;
 
-            const big = v1 === 2 || v1 === 3;
+            const big = v1 === 2 || v1 === 3 || v1 === 4;
             const scRange = (combo < 10 ? 0 : (combo < 30 ? 1 : (combo < 50 ? 2 : (combo < 100 ? 3 : 4))));
             scNotes[scGogo][scRange] += big ? 2 : 1;
 
@@ -192,10 +210,11 @@ function getStatistics(course) {
             rendaStart = note.time;
             continue;
         }
-        else if (note.type === 'balloon') {
+        else if (note.type === 'balloon' || note.type === 'fuse') {
             balloonStart = note.time;
             balloonCount = note.count;
             balloonGogo = scGogo;
+            balloonType = note.type;
 
             continue;
         }
@@ -207,7 +226,7 @@ function getStatistics(course) {
             else if (balloonStart) {
                 const balloonLength = note.time - balloonStart;
                 const balloonSpeed = balloonCount / balloonLength;
-                balloons.push([balloonLength, balloonCount]);
+                balloons.push([balloonLength, balloonCount, balloonType]);
                 balloonStart = false;
 
                 if (balloonSpeed <= 60) {
@@ -215,6 +234,12 @@ function getStatistics(course) {
                     scBalloonPop[balloonGogo] += 1;
                 }
             }
+        }
+        else if (note.type === 'adlib') {
+            adlibs++;
+        }
+        else if (note.type === 'mine') {
+            mines++;
         }
     }
 
@@ -230,18 +255,20 @@ function getStatistics(course) {
             balloon: scBalloon,
             balloonPop: scBalloonPop,
         },
+        adlibs: adlibs,
+        mines: mines,
     };
 }
 
 function getGraph(course) {
     const data = [];
-    let datum = { don: 0, kat: 0 }, max = 0;
+    let datum = { don: 0, kat: 0, kadon: 0 }, max = 0;
 
     const dataCount = 100,
         length = course.notes[course.notes.length - 1].time,
         timeframe = length / dataCount;
 
-    const typeNote = ['don', 'kat', 'donBig', 'katBig'];
+    const typeNote = ['don', 'kat', 'donBig', 'katBig', 'kadon'];
 
     for (let i = 0; i < course.notes.length; i++) {
         const note = course.notes[i];
@@ -249,20 +276,21 @@ function getGraph(course) {
         const v1 = typeNote.indexOf(note.type);
         if (v1 !== -1) {
             while ((data.length + 1) * timeframe <= note.time) {
-                const sum = datum.don + datum.kat;
+                const sum = datum.don + datum.kat + datum.kadon;
                 if (max < sum) max = sum;
 
                 data.push(datum);
-                datum = { don: 0, kat: 0 };
+                datum = { don: 0, kat: 0, kadon: 0 };
             }
 
             if (note.type === 'don' || note.type === 'donBig') datum.don += 1;
             else if (note.type === 'kat' || note.type === 'katBig') datum.kat += 1;
+            else if (note.type === 'kadon') datum.kadon += 1;
         }
     }
 
     while (data.length < dataCount)
-        data.push({ don: 0, kat: 0 });
+        data.push({ don: 0, kat: 0, kadon: 0 });
 
     return { timeframe, max, data };
 }

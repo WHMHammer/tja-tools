@@ -3,6 +3,9 @@ import { Buffer } from 'buffer';
 import $ from 'umbrellajs';
 import * as d3 from 'd3';
 
+import downloadjs from 'downloadjs';
+import html2canvas from 'html2canvas';
+
 import chardet from 'chardet';
 import iconv from 'iconv-lite';
 
@@ -27,6 +30,45 @@ const $errors = $('.area-errors .errors');
 let tjaParsed = null;
 let selectedDifficulty = '';
 let selectedPage = 'preview';
+
+const downloadStatisticsAsImage = async () => {
+    if (!tjaParsed === null || selectedDifficulty === "") {
+        alert("Please select a chart and difficulty");
+        return;
+    }
+
+    const statsEl = document.querySelector('.area-pages');
+    if (!statsEl) return;
+
+    const copiedstatsEl = statsEl.cloneNode(true);
+    copiedstatsEl.style.position = 'fixed';
+    copiedstatsEl.style.right = '100%';
+    copiedstatsEl.style.width = '100%';
+    copiedstatsEl.style.height = 'auto';
+
+    document.body.append(copiedstatsEl);
+
+    const canvas = await html2canvas(copiedstatsEl);
+
+    copiedstatsEl.remove();
+
+    const dataURL = canvas.toDataURL('image/png');
+    downloadjs(dataURL, `${tjaParsed.headers.title}.statistics.png`, 'image/png');
+};
+
+const downloadPreviewImage = async () => {
+    if (!tjaParsed === null || selectedDifficulty === "") {
+        alert("Please select a chart and difficulty");
+        return;
+    }
+
+    const canvas = document.querySelector('#tja-preview');
+    if (!canvas) return;
+
+    const dataURL = canvas.toDataURL('image/png');
+    downloadjs(dataURL, `${tjaParsed.headers.title}.preview.png`, 'image/png');
+};
+
 
 function displayErrors(message) {
     $errors.text(message);
@@ -132,22 +174,30 @@ function buildStatisticsPage(data) {
 
     const statDon = stats.notes[0] + stats.notes[2];
     const statKat = stats.notes[1] + stats.notes[3];
+    const statKaDon = stats.notes[4];
     $('.stat-don').text(statDon);
     $('.stat-kat').text(statKat);
+    $('.stat-kadon').text(stats.notes[4]);
+    $('.stat-adlib').text(stats.adlibs);
+    $('.stat-mine').text(stats.mines);
 
     const statDonRatio = (statDon / stats.totalCombo) * 100;
-    const statKatRatio = 100 - statDonRatio;
+    const statKatRatio = (statKat / stats.totalCombo) * 100;
+    const statKaDonRatio = (statKaDon / stats.totalCombo) * 100;
     $('.stat-don-ratio').text(statDonRatio.toFixed(2) + '%');
     $('.stat-kat-ratio').text(statKatRatio.toFixed(2) + '%');
+    $('.stat-kadon-ratio').text(statKaDonRatio.toFixed(2) + '%');
 
     $('.stat-density').text((stats.totalCombo / stats.length).toFixed(3));
     $('.stat-length').text(stats.length.toFixed(2));
+    const formatTime = (seconds) => `${Math.floor(seconds / 60)}m${(seconds % 60).toFixed(2).padStart(5, '0')}s`;
+    $('.stat-formatted-length').text(formatTime(stats.length));
 
     $('.stat-renda').text(stats.rendas.map(r => r.toFixed(3) + 's').join(' + '));
     $('.stat-renda-total').text(stats.rendas.reduce((a, b) => a + b, 0).toFixed(3) + 's');
 
     $('.stat-balloon').html(stats.balloons.map(b => (
-        `${b[1]}hit(s) / ${b[0].toFixed(3)}s = ${(b[1] / b[0]).toFixed(3)} hit/s`
+        `${b[1]}hit(s) / ${b[0].toFixed(3)}s = ${(b[1] / b[0]).toFixed(3)} hit/s${(b[2] === 'fuse') ? " [💣]" : ""}`
     )).join('<br>'));
 
     // Graph
@@ -164,7 +214,7 @@ function buildStatisticsPage(data) {
         .append('g')
         .attr('transform', 'translate(30, 20)');
 
-    const layers = d3.stack().keys(['don', 'kat'])(graph.data);
+    const layers = d3.stack().keys(['kadon', 'don', 'kat'])(graph.data);
 
     x.domain(layers[0].map((d, idx) => idx));
     y.domain([0, Math.ceil(graph.max / 5) * 5]);
@@ -180,7 +230,7 @@ function buildStatisticsPage(data) {
         .data(layers)
         .enter().append('g')
         .attr('class', 'layer')
-        .style('fill', (d, i) => ['#f44e', '#44fe'][i]);
+        .style('fill', (d, i) => ['#f0f', '#f00', '#00f'][i]);
 
     layer
         .selectAll('rect')
@@ -270,6 +320,15 @@ $('.controls-page .button').on('click', evt => {
 
     selectedPage = page;
     updateUI();
+});
+
+$('.btn-download').on('click', evt => {
+    if (selectedPage === 'preview') {
+        downloadPreviewImage();
+    }
+    else {
+        downloadStatisticsAsImage();
+    }
 });
 
 //==============================================================================

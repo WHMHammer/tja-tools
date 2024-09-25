@@ -53,6 +53,18 @@ body {
     color: #44f;
 }
 
+.is-color-kadon {
+    color: #f4f;
+}
+
+.is-color-adlib {
+    color: #4f4;
+}
+
+.is-color-mine {
+    color: #444;
+}
+
 /***** Elements *****/
 
 .pane-left,
@@ -151,7 +163,8 @@ body {
 }
 
 .area-controls {
-    .button {
+    .button,
+    .btn-download {
         padding: 2px 4px;
         background: #fafafa;
         border: 1px solid #aaa;
