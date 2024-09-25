@@ -7,6 +7,7 @@ function parseLine(line) {
         'OFFSET',
         'DEMOSTART',
         'GENRE',
+        'MAKER',
     ];
 
     const HEADER_COURSE = [
@@ -15,7 +16,11 @@ function parseLine(line) {
         'BALLOON',
         'SCOREINIT',
         'SCOREDIFF',
-
+        'NOTESDESIGNER0',
+        'NOTESDESIGNER1',
+        'NOTESDESIGNER2',
+        'NOTESDESIGNER3',
+        'NOTESDESIGNER4',
         'TTROWBEAT',
     ];
 
@@ -50,7 +55,7 @@ function parseLine(line) {
         line = line.substr(0, match.index).trim();
 
     // header
-    if (match = line.match(/^([A-Z]+):(.+)/i)) {
+    if (match = line.match(/^([A-Z0-9]+):(.+)/i)) {
         const nameUpper = match[1].toUpperCase();
         const value = match[2];
 
@@ -107,7 +112,7 @@ function getCourse(tjaHeaders, lines) {
         balloon: [],
         scoreInit: 100,
         scoreDiff: 100,
-
+        maker: null,
         ttRowBeat: 16,
     };
 
@@ -147,8 +152,18 @@ function getCourse(tjaHeaders, lines) {
                     headers.scoreDiff = parseInt(line.value, 10);
                     break;
 
+                case 'NOTESDESIGNER0':
+                case 'NOTESDESIGNER1':
+                case 'NOTESDESIGNER2':
+                case 'NOTESDESIGNER3':
+                case 'NOTESDESIGNER4': 
+                    headers.maker = line.value;
+                    break; 
+
                 case 'TTROWBEAT':
                     headers.ttRowBeat = parseInt(line.value, 10);
+                    break;
+                    
             }
         }
         else if (line.type === 'command') {
@@ -352,6 +367,7 @@ export default function parseTJA(tja) {
         offset: 0,
         demoStart: 0,
         genre: '',
+        maker: null,
     };
 
     const courses = {};
@@ -373,7 +389,7 @@ export default function parseTJA(tja) {
                     break;
 
                 case 'SUBTITLE':
-                    headers.subtitle = parsed.value;
+                    headers.subtitle = parsed.value.replace(/^(\+\+|--)/, '');;
                     break;
 
                 case 'BPM':
@@ -394,6 +410,10 @@ export default function parseTJA(tja) {
 
                 case 'GENRE':
                     headers.genre = parsed.value;
+                    break;
+
+                case 'MAKER':
+                    headers.maker = parsed.value;
                     break;
             }
         }

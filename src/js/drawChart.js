@@ -3,7 +3,7 @@ import { drawLine, drawCircle, drawRect, drawText, drawPixelText } from './canva
 //==============================================================================
 // Drawing config and helpers
 
-const CHART_PADDING_TOP = 64;
+const CHART_PADDING_TOP = 112;
 const CHART_PADDING_BOTTOM = 8;
 const CHART_BG = '#cccccc';
 
@@ -222,6 +222,9 @@ export default function (chart, courseId) {
         }
 
         drawText(ctx, 8, 8, chart.headers.title, 'bold 28px sans-serif', '#000', 'top', 'left');
+        drawText(ctx, 8, 40, chart.headers.subtitle, 'bold 20px sans-serif', '#000', 'top', 'left');
+        if (course.headers.maker !== null || chart.headers.maker !== null)
+            drawText(ctx, 8, 64, `Charter: ${(course.headers.maker !== null) ? course.headers.maker : chart.headers.maker}`, 'bold 20px sans-serif', '#000', 'top', 'left');
 
         const difficulty = ['Easy', 'Normal', 'Hard', 'Oni', 'Edit'];
         const levelMax = [5, 7, 8, 10, 10];
@@ -231,7 +234,8 @@ export default function (chart, courseId) {
             '☆'.repeat(Math.max(levelMax[course.course] - course.headers.level, 0))
         );
 
-        drawText(ctx, 8, 40, difficultyText, 'bold 20px sans-serif', '#000', 'top', 'left');
+        // 40
+        drawText(ctx, 8, 88, difficultyText, 'bold 20px sans-serif', '#000', 'top', 'left');
 
         //============================================================================
         // 3. Go-go time, measure grid, events
