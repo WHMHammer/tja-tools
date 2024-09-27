@@ -231,7 +231,8 @@ export default function (chart, courseId) {
         const difficultyText = (
             difficulty[course.course] + ' ' +
             '★'.repeat(course.headers.level) +
-            '☆'.repeat(Math.max(levelMax[course.course] - course.headers.level, 0))
+            '☆'.repeat(Math.max(levelMax[course.course] - course.headers.level, 0)) +
+            ` Lv.${course.headers.level}`
         );
 
         // 40
