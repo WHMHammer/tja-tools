@@ -42,11 +42,11 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
 
 ## Examples
 
-![](示例.png)
+![](doc/img/示例.png)
 
-![](示例-春节序曲-谱面.png)
+![](doc/img/示例-春节序曲-谱面.png)
 
-![](示例-春节序曲-统计.png)
+![](doc/img/示例-春节序曲-统计.png)
 
 ## Progress
 
@@ -83,6 +83,7 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
     - [x] `A` (partner Don)
     - [x] `B` (partner Ka)
     - [x] `C` (Bomb)
+    - [x] `D` (Fuse)
     - [x] `F` (ADLIB)
     - [x] `G` (Green/Purple)
 - Commands
