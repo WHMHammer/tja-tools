@@ -1,27 +1,31 @@
 const path = require('path');
 
+const distPath = 'webpack-dist';
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssnanoPlugin = require('cssnano');
 
-const isDev = process.env.NODE_ENV === 'development';
-const styleLoader = isDev ? 'style-loader' : MiniCssExtractPlugin.loader;
+const styleLoader = MiniCssExtractPlugin.loader;
 const postcssLoader = {
     loader: 'postcss-loader',
     options: {
         ident: 'postcss',
-        plugins: [],
+        plugins: [
+            CssnanoPlugin(),
+        ],
     },
 };
-
 
 const config = {
     entry: {
         app: './src/js/main.js',
     },
     output: {
-        filename: 'js/[name].js',
-        publicPath: 'dist/',
+        filename: 'js/[name].js?hash=[contenthash:6]',
+        path: path.resolve(__dirname, distPath),
+        publicPath: `./`,
     },
     optimization: {
         splitChunks: {
@@ -53,7 +57,7 @@ const config = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html',
-            filename: '../index.html',
+            filename: `../${distPath}/index.html`,
             minify: {
                 removeComments: true,
                 collapseWhitespace: true,
@@ -61,25 +65,15 @@ const config = {
             alwaysWriteToDisk: true,
         }),
         new HtmlWebpackHarddiskPlugin(),
-    ],
-    devServer: {
-        publicPath: 'dist/',
-    },
-};
-
-if (!isDev) {
-    const cssnano = require('cssnano');
-
-    config.output.filename += '?hash=[contenthash:6]';
-
-    postcssLoader.options.plugins.push(cssnano());
-
-    config.plugins.push(
         new MiniCssExtractPlugin({
             filename: 'css/[name].css?hash=[contenthash:6]',
             chunkFilename: 'css/[id].css',
         }),
-    );
-}
+    ],
+    devServer: {
+        contentBase: path.resolve(__dirname, distPath),
+        open: true,
+    },
+};
 
 module.exports = config;
