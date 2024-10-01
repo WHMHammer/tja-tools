@@ -54,8 +54,9 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
 - [ ] Show different branches side-by-side
 - Meta (common)
     - [x] `TITLE`
-    - [ ] `SUBTITLE`
+    - [x] `SUBTITLE`
     - [x] `BPM`
+    - [x] `MAKER`
     - [ ] `GENRE`
 - Meta (course-specific)
     - `COURSE`
@@ -69,6 +70,8 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
     - [x] `LEVEL`
     - [x] `BALLOON`
     - [ ] `STYLE`
+    - [x] `NOTESDESIGNER0` - `NOTESDESIGNER6` (only 0-4 are recognized)
+    - [x] `TTROWBEAT` (for visualizing, maximum # of beats in one line)
 - Notes
     - [x] `0` (empty)
     - [x] `1` (Don)
@@ -86,6 +89,8 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
     - [x] `D` (Fuse)
     - [x] `F` (ADLIB)
     - [x] `G` (Green/Purple)
+    - [ ] `H` (DRUMROLL or Don-roll)
+    - [ ] `I` (Drumroll or Ka-roll)
 - Commands
     - [x] `#START`
     - [x] `#END`
@@ -102,9 +107,10 @@ You shall then open `index.html` (not `src/index.html`) in your browser.
     - [x] `#E`
     - [x] `#M`
     - [x] `#BRANCHEND`
-    - `#LYRIC`
+    - [ ] `#LYRIC`
     - [ ] `#LEVELHOLD`
     - [ ] `#NEXTSONG`
+    - [x] `#TTBREAK` (for visualizing, wrap at the start of this measure)
 
 # Acknowledgement
 
