@@ -54,8 +54,9 @@ npm run build
 - [ ] 并列显示不同分歧轨道
 - 元信息（通用）
     - [x] `TITLE`
-    - [ ] `SUBTITLE`
+    - [x] `SUBTITLE`
     - [x] `BPM`
+    - [x] `MAKER`
     - [ ] `GENRE`
 - 元信息（各难度独立）
     - `COURSE`
@@ -69,6 +70,8 @@ npm run build
     - [x] `LEVEL`
     - [x] `BALLOON`
     - [ ] `STYLE`
+    - [x] `NOTESDESIGNER0` ~ `NOTESDESIGNER6` (仅0~4有效)
+    - [x] `TTROWBEAT`（图像化用，单行最大拍数）
 - 音符
     - [x] `0`（空）
     - [x] `1`（小咚）
@@ -86,6 +89,8 @@ npm run build
     - [x] `D`（紫色气球）
     - [x] `F`（隐藏音符）
     - [x] `G`（紫/绿音符）
+    - [ ] `H`（大滚奏或小咚滚奏开始）
+    - [ ] `I`（小滚奏或小咔滚奏开始）
 - 指令
     - [x] `#START`
     - [x] `#END`
@@ -105,6 +110,8 @@ npm run build
     - [ ] `#LYRIC`
     - [ ] `#LEVELHOLD`
     - [ ] `#NEXTSONG`
+    - [x] `#TTBREAK`（图像化用，在本小节首换行）
+
 # 致谢
 
 - [Snack](https://github.com/Snack-X)：项目的原作者
