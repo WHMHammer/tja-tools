@@ -326,10 +326,11 @@ export default function (chart, courseId) {
 
                 beat += mBeat;
 
-                // Draw last measure line
+                // Draw the last-measure-ending line
                 if (midx + 1 === measures.length) {
                     const mx2 = GET_BEAT_X(beat);
-                    if (barlineOn) {
+                    // treat the chart-final last-measure-ending line as hidden
+                    if (barlineOn && ridx + 1 !== rows.length) {
                         drawLine(ctx, mx2, y, mx2, y + ROW_HEIGHT, 2, '#fff');
                     }
                     else {
