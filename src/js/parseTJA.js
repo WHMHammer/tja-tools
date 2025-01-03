@@ -183,10 +183,18 @@ function getCourse(tjaHeaders, lines) {
                         else if (values.length >= 2 && parseFloat(values[1]) <= 100) targetBranch = 'E';
                         else targetBranch = 'N';
                     }
+                    measureEvents.push({
+                        name: 'branchStart',
+                        position: measureData.length,
+                    });
                     break;
 
                 case 'BRANCHEND':
                     currentBranch = targetBranch;
+                    measureEvents.push({
+                        name: 'branchEnd',
+                        position: measureData.length,
+                    });
                     break;
 
                 case 'N':

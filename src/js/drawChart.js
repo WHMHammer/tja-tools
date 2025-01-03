@@ -284,13 +284,25 @@ export default function (chart, courseId) {
                 const measure = measures[midx];
                 const mBeat = measure.length[0] / measure.length[1] * 4;
 
+                var branchStart = false;
+                // Pre-scan measure-initial events
+                for (let i = 0; i < measure.events.length; i++) {
+                    const event = measure.events[i];
+                    if (event.position > 0) {
+                        break;
+                    }
+                    if (event.name === 'branchStart') {
+                        branchStart = true;
+                    }
+                }
+
                 // Sub grid (including the hidden bar line)
                 const ny = y + ROW_HEIGHT_INFO;
 
                 for (let i = 0; i < measure.length[0] * 2; i++) {
                     const subBeat = i / measure.length[1] * 2;
                     const subx = GET_BEAT_X(beat + subBeat);
-                    const style = '#fff' + (i % 2 ? '4' : '8');
+                    const style = ((i == 0 && branchStart) ? '#fe0' : '#fff') + (i % 2 ? '4' : '8');
 
                     drawLine(ctx, subx, ny, subx, ny + ROW_HEIGHT_NOTE, 2, style);
                 }
@@ -319,7 +331,7 @@ export default function (chart, courseId) {
 
                 // Measure lines, number
                 if (barlineOn) {
-                    drawLine(ctx, mx, y, mx, y + ROW_HEIGHT, 2, '#fff');
+                    drawLine(ctx, mx, y, mx, y + ROW_HEIGHT, 2, branchStart ? '#fe0' : '#fff');
                 }
                 drawPixelText(ctx, mx + 2, y + ROW_HEIGHT_INFO - 1, measureNumber.toString(), '#000', 'bottom', 'left');
                 measureNumber += 1;
