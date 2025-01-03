@@ -95,8 +95,8 @@ npm run build
     - [x] `#SCROLL`
     - [x] `#GOGOSTART`
     - [x] `#GOGOEND`
-    - [ ] `#BARLINEOFF`
-    - [ ] `#BARLINEON`
+    - [x] `#BARLINEOFF`
+    - [x] `#BARLINEON`
     - [x] `#BRANCHSTART` (仅显示最难分支)
     - [x] `#N`
     - [x] `#E`
