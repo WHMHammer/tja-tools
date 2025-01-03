@@ -240,6 +240,20 @@ function getCourse(tjaHeaders, lines) {
                             });
                             break;
 
+                        case 'BARLINEOFF':
+                            measureEvents.push({
+                                name: 'barlineOff',
+                                position: measureData.length,
+                            });
+                            break;
+
+                        case 'BARLINEON':
+                            measureEvents.push({
+                                name: 'barlineOn',
+                                position: measureData.length,
+                            });
+                            break;
+
                         case 'SCROLL':
                             measureEvents.push({
                                 name: 'scroll',

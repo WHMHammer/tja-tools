@@ -272,6 +272,7 @@ export default function (chart, courseId) {
             }
         }
 
+        let barlineOn = true;
         for (let ridx = 0; ridx < rows.length; ridx++) {
             const row = rows[ridx], measures = row.measures;
             let beat = 0;
@@ -283,10 +284,10 @@ export default function (chart, courseId) {
                 const measure = measures[midx];
                 const mBeat = measure.length[0] / measure.length[1] * 4;
 
-                // Sub grid
+                // Sub grid (including the hidden bar line)
                 const ny = y + ROW_HEIGHT_INFO;
 
-                for (let i = 1; i < measure.length[0] * 2; i++) {
+                for (let i = 0; i < measure.length[0] * 2; i++) {
                     const subBeat = i / measure.length[1] * 2;
                     const subx = GET_BEAT_X(beat + subBeat);
                     const style = '#fff' + (i % 2 ? '4' : '8');
@@ -308,10 +309,18 @@ export default function (chart, courseId) {
                         drawLine(ctx, ex, y, ex, y + ROW_HEIGHT, 2, '#444');
                         drawPixelText(ctx, ex + 2, y + ROW_HEIGHT_INFO - 7, 'BPM ' + event.value.toString(), '#00f', 'bottom', 'left');
                     }
+                    else if (event.name === 'barlineOff') {
+                        barlineOn = false;
+                    }
+                    else if (event.name === 'barlineOn') {
+                        barlineOn = true;
+                    }
                 }
 
                 // Measure lines, number
-                drawLine(ctx, mx, y, mx, y + ROW_HEIGHT, 2, '#fff');
+                if (barlineOn) {
+                    drawLine(ctx, mx, y, mx, y + ROW_HEIGHT, 2, '#fff');
+                }
                 drawPixelText(ctx, mx + 2, y + ROW_HEIGHT_INFO - 1, measureNumber.toString(), '#000', 'bottom', 'left');
                 measureNumber += 1;
 
@@ -320,7 +329,12 @@ export default function (chart, courseId) {
                 // Draw last measure line
                 if (midx + 1 === measures.length) {
                     const mx2 = GET_BEAT_X(beat);
-                    drawLine(ctx, mx2, y, mx2, y + ROW_HEIGHT, 2, '#fff');
+                    if (barlineOn) {
+                        drawLine(ctx, mx2, y, mx2, y + ROW_HEIGHT, 2, '#fff');
+                    }
+                    else {
+                        drawLine(ctx, mx2, ny, mx2, ny + ROW_HEIGHT_NOTE, 2, '#fff8');
+                    }
                 }
             }
         }
