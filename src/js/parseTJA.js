@@ -454,18 +454,18 @@ export default function parseTJA(tja) {
             }
         }
         else if (parsed.type === 'header' && parsed.scope === 'course') {
-            if (parsed.name === 'COURSE') {
+            courseLines.push(parsed);
+        }
+        else if (parsed.type === 'command') {
+            courseLines.push(parsed);
+
+            if (parsed.name === 'END') {
                 if (courseLines.length) {
                     const course = getCourse(headers, courseLines);
                     courses.push(course);
                     courseLines = [];
                 }
             }
-
-            courseLines.push(parsed);
-        }
-        else if (parsed.type === 'command') {
-            courseLines.push(parsed);
         }
         else if (parsed.type === 'data') {
             courseLines.push(parsed);
