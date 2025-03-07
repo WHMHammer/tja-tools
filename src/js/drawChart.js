@@ -250,9 +250,9 @@ export default function (chart, courseId) {
         const difficulty = ['Easy', 'Normal', 'Hard', 'Oni', 'Edit'];
         const levelMax = [5, 7, 8, 10, 10];
         const difficultyText = (
-            difficulty[course.course] + ' ' +
+            difficulty[course.headers.course] + ' ' +
             '★'.repeat(course.headers.level) +
-            '☆'.repeat(Math.max(levelMax[course.course] - course.headers.level, 0)) +
+            '☆'.repeat(Math.max(levelMax[course.headers.course] - course.headers.level, 0)) +
             ` Lv.${course.headers.level}`
         );
 
