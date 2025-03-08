@@ -142,15 +142,13 @@ function parseLine(line) {
 }
 
 function getCourse(tjaHeaders, lines) {
-    const headers = {
-        course: tjaHeaders.course,
-        level: 0,
-        balloon: [],
-        scoreInit: 100,
-        scoreDiff: 100,
-        maker: null,
-        ttRowBeat: 16,
-    };
+    const latestCourseHeaders = tjaHeaders.latestCourseHeaders;
+    let courseHeaders = tjaHeaders.courseHeaders[latestCourseHeaders.course];
+    const headers = {};
+
+    function setHeaderValue(header, value) {
+        latestCourseHeaders[header] = courseHeaders[header] = headers[header] = value;
+    }
 
     const measures = [];
 
@@ -167,12 +165,16 @@ function getCourse(tjaHeaders, lines) {
                 case 'COURSE':
                     const course = parseCourseValue(line.value);
                     if (course !== null) {
-                        tjaHeaders.course = headers.course = course;
+                        // switch parsed course
+                        if (tjaHeaders.courseHeaders[course] === undefined) {
+                            courseHeaders = tjaHeaders.courseHeaders[course] = {};
+                        }
+                        setHeaderValue('course', course);
                     }
                     break;
 
                 case 'LEVEL':
-                    headers.level = parseInt(line.value, 10);
+                    setHeaderValue('level', parseInt(line.value, 10));
                     break;
 
                 case 'BALLOON':
@@ -180,15 +182,15 @@ function getCourse(tjaHeaders, lines) {
                         .split(/[^0-9]/)
                         .filter(b => b !== '')
                         .map(b => parseInt(b, 10));
-                    headers.balloon = balloons;
+                    setHeaderValue('balloon', balloons);
                     break;
 
                 case 'SCOREINIT':
-                    headers.scoreInit = parseInt(line.value, 10);
+                    setHeaderValue('scoreInit', parseInt(line.value, 10));
                     break;
 
                 case 'SCOREDIFF':
-                    headers.scoreDiff = parseInt(line.value, 10);
+                    setHeaderValue('scoreDiff', parseInt(line.value, 10));
                     break;
 
                 case 'NOTESDESIGNER0':
@@ -196,11 +198,11 @@ function getCourse(tjaHeaders, lines) {
                 case 'NOTESDESIGNER2':
                 case 'NOTESDESIGNER3':
                 case 'NOTESDESIGNER4': 
-                    headers.maker = line.value;
+                    setHeaderValue('maker', line.value);
                     break; 
 
                 case 'TTROWBEAT':
-                    headers.ttRowBeat = parseInt(line.value, 10);
+                    setHeaderValue('ttRowBeat', parseInt(line.value, 10));
                     break;
                     
             }
@@ -386,6 +388,25 @@ function getCourse(tjaHeaders, lines) {
 
     // Output
     console.log(measures[measures.length - 1])
+
+    // handle header value fallbacks
+    const defaultCourseHeaders = tjaHeaders.courseHeaders[undefined];
+    for (let header in defaultCourseHeaders) {
+        if (headers[header] !== undefined) {
+            continue;
+        }
+        if (courseHeaders[header] !== undefined) {
+            headers[header] = courseHeaders[header];
+            continue;
+        }
+        if (latestCourseHeaders[header] !== undefined) {
+            // TODO: warn cross-course header fallback
+            headers[header] = latestCourseHeaders[header];
+            continue;
+        }
+        headers[header] = defaultCourseHeaders[header];
+    }
+
     return { headers, measures };
 }
 
@@ -395,6 +416,7 @@ export default function parseTJA(tja) {
         .map(line => line.trim());
 
     const headers = {
+        // global-fineness headers
         title: '',
         subtitle: '',
         bpm: 120,
@@ -403,7 +425,21 @@ export default function parseTJA(tja) {
         demoStart: 0,
         genre: '',
         maker: null,
-        course: 3, // for fallback
+
+        // local-fineness headers
+        courseHeaders: [],
+        latestCourseHeaders: {},
+    };
+
+    // for initial parsed course-fineness headers
+    headers.courseHeaders[undefined] = {
+        course: 3,
+        level: 0,
+        balloon: [],
+        scoreInit: 100,
+        scoreDiff: 100,
+        maker: null,
+        ttRowBeat: 16,
     };
 
     const courses = [];
