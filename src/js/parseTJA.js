@@ -34,6 +34,21 @@ function parseCourseValue(courseValue) {
     return null;
 }
 
+function parseStyleValue(styleValue) {
+    const intValue = parseInt(styleValue, 10);
+    if (!isNaN(intValue) && intValue >= 1) {
+        return intValue;
+    }
+    switch (styleValue.toLowerCase()) {
+        case 'single':
+            return 1;
+
+        case 'couple': case 'double':
+            return 2;
+    }
+    return null;
+}
+
 function parseLine(line) {
     const HEADER_GLOBAL = [
         'TITLE',
@@ -48,6 +63,7 @@ function parseLine(line) {
 
     const HEADER_COURSE = [
         'COURSE',
+        'STYLE',
         'LEVEL',
         'BALLOON',
         'SCOREINIT',
@@ -173,6 +189,13 @@ function getCourse(tjaHeaders, lines) {
                     }
                     break;
 
+                case 'STYLE':
+                    const style = parseStyleValue(line.value);
+                    if (style !== null) {
+                        setHeaderValue('style', style);
+                    }
+                    break;
+
                 case 'LEVEL':
                     setHeaderValue('level', parseInt(line.value, 10));
                     break;
@@ -251,6 +274,13 @@ function getCourse(tjaHeaders, lines) {
                     break;
 
                 case 'START':
+                    let matchStartPlayer = line.value.match(/P(\d+)/);
+                    if (matchStartPlayer) {
+                        let startPlayer = parseInt(matchStartPlayer[1], 10);
+                        if (startPlayer > 0) {
+                            headers.startPlayer = startPlayer; // not a header but stored as such
+                        }
+                    }
                     currentBranch = 'N';
                     targetBranch = 'N';
                     flagLevelhold = false;
@@ -434,6 +464,8 @@ export default function parseTJA(tja) {
     // for initial parsed course-fineness headers
     headers.courseHeaders[undefined] = {
         course: 3,
+        style: 1,
+        startPlayer: 1,
         level: 0,
         balloon: [],
         scoreInit: 100,

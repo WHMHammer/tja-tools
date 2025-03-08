@@ -96,8 +96,12 @@ function clearControlsDiffs() {
     $(`.controls-diff .button`).remove();
 }
 
-function addControlsDiff(difficultyId, difficultyType) {
-    let element = `<span class="button btn-diff-${difficultyId}" data-value='${difficultyId}'>${difficultyTypeToString(difficultyType)}</span>`;
+function addControlsDiff(difficultyId, headers) {
+    let diffName = difficultyTypeToString(headers.course);
+    if (headers.style > 1) {
+        diffName += `-${headers.style}P (P${headers.startPlayer})`;
+    }
+    let element = `<span class="button btn-diff-${difficultyId}" data-value='${difficultyId}'>${diffName}</span>`;
 
     $(`.controls-diff`).append(element);
     $(`.controls-diff`).append(' ');
@@ -132,12 +136,16 @@ function processTJA() {
     try {
         tjaParsed = parseTJA($input.first().value);
         tjaParsed.courses.sort(function (a, b) {
-            return a.headers.course - b.headers.course;
+            return (a.headers.course !== b.headers.course) ?
+                a.headers.course - b.headers.course
+                : (a.headers.style !== b.headers.style) ?
+                a.headers.style - b.headers.style
+                : a.headers.startPlayer - b.headers.startPlayer;
         });
 
         clearControlsDiffs();
         tjaParsed.courses.forEach(function (course, iDiff) {
-            addControlsDiff(iDiff, course.headers.course);
+            addControlsDiff(iDiff, course.headers);
         });
         listenControlsDiffs();
 
