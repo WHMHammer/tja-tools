@@ -412,6 +412,28 @@ export default function parseTJA(tja) {
     let idx;
     let courseLines = [];
 
+    // parse states
+    let hasStarted = false;
+    let hasData = false;
+
+    function pushCourse() {
+        if (courseLines.length) {
+            if (!hasStarted) {
+                // TODO: emit straying-#END warning
+            }
+            hasStarted = false;
+
+            // process anyway to update global headers
+            const course = getCourse(headers, courseLines);
+
+            if (hasData) {
+                hasData = false;
+                courses.push(course);
+            }
+            courseLines = [];
+        }
+    }
+
     for (idx = 0; idx < lines.length; idx++) {
         const line = lines[idx];
         if (line === '') continue;
@@ -454,28 +476,34 @@ export default function parseTJA(tja) {
             }
         }
         else if (parsed.type === 'header' && parsed.scope === 'course') {
+            if ((parsed.name === 'COURSE' || parsed.name === 'STYLE') && hasStarted) {
+                // TODO: emit missing-#END warning
+                pushCourse();
+                hasStarted = false;
+            }
             courseLines.push(parsed);
         }
         else if (parsed.type === 'command') {
+            if (parsed.name === 'START') {
+                hasStarted = true;
+            }
             courseLines.push(parsed);
 
             if (parsed.name === 'END') {
-                if (courseLines.length) {
-                    const course = getCourse(headers, courseLines);
-                    courses.push(course);
-                    courseLines = [];
-                }
+                pushCourse();
             }
         }
         else if (parsed.type === 'data') {
+            if (!hasStarted) {
+                // TODO: emit missing-#START warning
+                hasStarted = true;
+            }
             courseLines.push(parsed);
+            hasData = true;
         }
     }
 
-    if (courseLines.length) {
-        const course = getCourse(headers, courseLines);
-        courses.push(course);
-    }
+    pushCourse();
 
     // Return
     return { headers, courses };
