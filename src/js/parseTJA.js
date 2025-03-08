@@ -126,7 +126,7 @@ function parseLine(line) {
         }
     }
     // data
-    else if (match = line.match(/^(([0-9]|A|B|C|D|F|G|H|I)*,?)$/)) {
+    else if (match = line.match(/^(([0-9]|A|B|C|D|F|G|H|I)+,?|,)$/)) {
         const data = match[1];
 
         return {
