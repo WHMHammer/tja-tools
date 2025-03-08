@@ -1,3 +1,19 @@
+export function difficultyTypeToString(difficultyType) {
+    switch (difficultyType) {
+        case 0:
+            return 'Easy';
+        case 1:
+            return 'Normal';
+        case 2:
+            return 'Hard';
+        case 3:
+            return 'Oni';
+        case 4:
+            return 'Edit';
+    }
+    return 'Unknown';
+}
+
 function parseCourseValue(courseValue) {
     switch (courseValue.toLowerCase()) {
         case 'easy': case '0':
@@ -390,7 +406,7 @@ export default function parseTJA(tja) {
         course: 3, // for fallback
     };
 
-    const courses = {};
+    const courses = [];
 
     // Line by line
     let idx;
@@ -441,7 +457,7 @@ export default function parseTJA(tja) {
             if (parsed.name === 'COURSE') {
                 if (courseLines.length) {
                     const course = getCourse(headers, courseLines);
-                    courses[headers.course] = course;
+                    courses.push(course);
                     courseLines = [];
                 }
             }
@@ -458,7 +474,7 @@ export default function parseTJA(tja) {
 
     if (courseLines.length) {
         const course = getCourse(headers, courseLines);
-        courses[headers.course] = course;
+        courses.push(course);
     }
 
     // Return
