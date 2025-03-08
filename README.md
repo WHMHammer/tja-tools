@@ -33,13 +33,14 @@ npm run build
 
 - [x] 自选文件编码
 - [ ] 并列显示不同分歧轨道
+- [ ] 并列显示不同玩家谱面
 - 元信息（通用）
     - [x] `TITLE`
     - [x] `SUBTITLE`
     - [x] `BPM`
     - [x] `MAKER`
     - [ ] `GENRE`
-- 元信息（各难度独立）
+- 元信息（可各难度独立）
     - `COURSE`
         - [x] `Easy` / `0`
         - [x] `Normal` / `1`
@@ -50,7 +51,7 @@ npm run build
         - [ ] `Dan` / `6`
     - [x] `LEVEL`
     - [x] `BALLOON`
-    - [ ] `STYLE`
+    - [x] `STYLE`（各玩家谱面显示为独立难度）
     - [x] `NOTESDESIGNER0` ~ `NOTESDESIGNER6` (仅0~4有效)
     - [x] `TTROWBEAT`（图像化用，单行最大拍数）
 - 音符
@@ -74,6 +75,7 @@ npm run build
     - [ ] `I`（小滚奏或小咔滚奏开始）
 - 指令
     - [x] `#START`
+        - [x] `P1`, `P2`, …（无玩家编号上限）
     - [x] `#END`
     - [x] `#MEASURE`
     - [x] `#BPMCHANGE`

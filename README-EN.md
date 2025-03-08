@@ -33,13 +33,14 @@ You shall then open `webpack-dist/index.html` (not `src/index.html`) with your w
 
 - [x] Manual Selection of file encoding
 - [ ] Show different branches side-by-side
+- [ ] Show different players' chart side-by-side
 - Meta (common)
     - [x] `TITLE`
     - [x] `SUBTITLE`
     - [x] `BPM`
     - [x] `MAKER`
     - [ ] `GENRE`
-- Meta (course-specific)
+- Meta (varing per-course)
     - `COURSE`
         - [x] `Easy` / `0`
         - [x] `Normal` / `1`
@@ -50,7 +51,7 @@ You shall then open `webpack-dist/index.html` (not `src/index.html`) with your w
         - [ ] `Dan` / `6`
     - [x] `LEVEL`
     - [x] `BALLOON`
-    - [ ] `STYLE`
+    - [x] `STYLE` (with each player's chart as an isolated difficulty)
     - [x] `NOTESDESIGNER0` - `NOTESDESIGNER6` (only 0-4 are recognized)
     - [x] `TTROWBEAT` (for visualizing, maximum # of beats in one line)
 - Notes
@@ -74,6 +75,7 @@ You shall then open `webpack-dist/index.html` (not `src/index.html`) with your w
     - [ ] `I` (Drumroll or Ka-roll)
 - Commands
     - [x] `#START`
+        - [x] `P1`, `P2`, … (no upper limit of player number)
     - [x] `#END`
     - [x] `#MEASURE`
     - [x] `#BPMCHANGE`
