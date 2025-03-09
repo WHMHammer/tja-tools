@@ -64,6 +64,27 @@ function drawBigNote(ctx, row, beat, color, drawInner = true) {
 //==============================================================================
 // Long notes
 
+// anchored at top-left
+function drawLongSegGogo(ctx, x, y, w, color) {
+    const h = ROW_HEIGHT_INFO;
+    drawRect(ctx, x, y, w, h, color);
+}
+
+// anchored at center
+function drawLongSegNote(ctx, x, y, w, rBorder, rOuter, rInner, color) {
+    drawRect(ctx, x, y - rBorder, w, rBorder * 2, '#000');
+    drawRect(ctx, x, y - rOuter, w, rOuter * 2, '#fff');
+    drawRect(ctx, x, y - rInner, w, rInner * 2, color);
+}
+
+function drawLongSegSmallNote(ctx, x, y, w, color) {
+    drawLongSegNote(ctx, x, y, w, NOTE_RADIUS, NOTE_RADIUS - 1, NOTE_RADIUS - 2, color);
+}
+
+function drawLongSegBigNote(ctx, x, y, w, color) {
+    drawLongSegNote(ctx, x, y, w, NOTE_RADIUS + 3, NOTE_RADIUS + 2, NOTE_RADIUS, color);
+}
+
 function drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, color, type = 'body') {
     let { x: sx, y: sy } = getNoteCenter(sRow, sBeat);
     let { x: ex, y: ey } = getNoteCenter(eRow, eBeat);
@@ -71,65 +92,35 @@ function drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, color, type = 'body') {
     const isGogo = type === 'gogo';
     const isBig = type === 'bodyBig';
 
-    const yDelta = isGogo ? ROW_OFFSET_NOTE_CENTER : (NOTE_RADIUS + (isBig ? 3 : 0));
-    sy -= yDelta;
-    ey -= yDelta;
+    if (isGogo) {
+        const yDelta = ROW_OFFSET_NOTE_CENTER;
+        sy -= yDelta;
+        ey -= yDelta;
+    }
 
-    const h = isGogo ? ROW_HEIGHT_INFO : (NOTE_RADIUS * 2 + (isBig ? 6 : 0));
+    const draw = isGogo ? drawLongSegGogo :
+        isBig ? drawLongSegBigNote : drawLongSegSmallNote;
 
     if (sRow === eRow) {
         const w = ex - sx;
-
-        if (isGogo) {
-            drawRect(ctx, sx, sy, w, h, color);
-        }
-        else {
-            drawRect(ctx, sx, sy, w, h, '#000');
-            drawRect(ctx, sx, sy + 1, w, h - 2, '#fff');
-            drawRect(ctx, sx, sy + 2, w, h - 4, color);
-        }
+        draw(ctx, sx, sy, w, color);
     }
     else {
         // start to end-of-row
         const endOfStartRow = rows[sRow].totalBeat,
             sw = GET_BEAT_X(endOfStartRow) - sx + ROW_TRAILING;
-
-        if (isGogo) {
-            drawRect(ctx, sx, sy, sw, h, color);
-        }
-        else {
-            drawRect(ctx, sx, sy, sw, h, '#000');
-            drawRect(ctx, sx, sy + 1, sw, h - 2, '#fff');
-            drawRect(ctx, sx, sy + 2, sw, h - 4, color);
-        }
+        draw(ctx, sx, sy, sw, color);
 
         // full rows
         for (let r = sRow + 1; r < eRow; r++) {
-            let ry = GET_ROW_Y(r);
+            let ry = GET_ROW_Y(r) + (isGogo ? 0 : ROW_OFFSET_NOTE_CENTER);
             let rw = GET_BEAT_X(rows[r].totalBeat) + ROW_TRAILING;
-
-            if (isGogo) {
-                drawRect(ctx, 0, ry, rw, h, color);
-            }
-            else {
-                ry += ROW_OFFSET_NOTE_CENTER - NOTE_RADIUS - (isBig ? 3 : 0)
-                drawRect(ctx, 0, ry, rw, h, '#000');
-                drawRect(ctx, 0, ry + 1, rw, h - 2, '#fff');
-                drawRect(ctx, 0, ry + 2, rw, h - 4, color);
-            }
+            draw(ctx, 0, ry, rw, color);
         }
 
         // start-of-row to end
         const ew = GET_BEAT_X(eBeat);
-
-        if (isGogo) {
-            drawRect(ctx, 0, ey, ew, h, color);
-        }
-        else {
-            drawRect(ctx, 0, ey, ew, h, '#000');
-            drawRect(ctx, 0, ey + 1, ew, h - 2, '#fff');
-            drawRect(ctx, 0, ey + 2, ew, h - 4, color);
-        }
+        draw(ctx, 0, ey, ew, color);
     }
 }
 
