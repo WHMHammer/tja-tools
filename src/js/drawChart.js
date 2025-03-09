@@ -1,4 +1,4 @@
-import { drawLine, drawCircle, drawRect, drawText, drawPixelText } from './canvasHelper';
+import { drawLine, drawCircle, drawCircleLeftHalf, drawCircleRightHalf, drawRect, drawText, drawPixelText } from './canvasHelper';
 import { isRollSymbol, isBalloonSymbol } from './analyseChart'
 
 //==============================================================================
@@ -33,31 +33,39 @@ function getNoteCenter(row, beat) {
     };
 }
 
-function drawSmallNote(ctx, row, beat, color, drawInner = true) {
+function drawSmallNote(ctx, row, beat, color, drawInner = true, side = 'all') {
     const { x, y } = getNoteCenter(row, beat);
 
-    drawCircle(ctx, x, y, NOTE_RADIUS, '#000');
+    const draw = (side === 'left') ? drawCircleLeftHalf
+        : (side === 'right') ? drawCircleRightHalf
+        : drawCircle;
+
+    draw(ctx, x, y, NOTE_RADIUS, '#000');
 
     if (drawInner) {
-        drawCircle(ctx, x, y, NOTE_RADIUS - 1, '#fff');
-        drawCircle(ctx, x, y, NOTE_RADIUS - 2, color);
+        draw(ctx, x, y, NOTE_RADIUS - 1, '#fff');
+        draw(ctx, x, y, NOTE_RADIUS - 2, color);
     }
     else {
-        drawCircle(ctx, x, y, NOTE_RADIUS - 1, color);
+        draw(ctx, x, y, NOTE_RADIUS - 1, color);
     }
 }
 
-function drawBigNote(ctx, row, beat, color, drawInner = true) {
+function drawBigNote(ctx, row, beat, color, drawInner = true, side = 'all') {
     const { x, y } = getNoteCenter(row, beat);
 
-    drawCircle(ctx, x, y, NOTE_RADIUS + 3, '#000');
+    const draw = (side === 'left') ? drawCircleLeftHalf
+        : (side === 'right') ? drawCircleRightHalf
+        : drawCircle;
+
+    draw(ctx, x, y, NOTE_RADIUS + 3, '#000');
 
     if (drawInner) {
-        drawCircle(ctx, x, y, NOTE_RADIUS + 2, '#fff');
-        drawCircle(ctx, x, y, NOTE_RADIUS, color);
+        draw(ctx, x, y, NOTE_RADIUS + 2, '#fff');
+        draw(ctx, x, y, NOTE_RADIUS, color);
     }
     else {
-        drawCircle(ctx, x, y, NOTE_RADIUS + 2, color);
+        draw(ctx, x, y, NOTE_RADIUS + 2, color);
     }
 }
 
@@ -125,22 +133,22 @@ function drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, color, type = 'body') {
 }
 
 function drawRendaSmall(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd) {
-    drawSmallNote(ctx, sRow, sBeat, '#fe4');
+    drawSmallNote(ctx, sRow, sBeat, '#fe4', true, 'left');
     if (!omitEnd)
-        drawSmallNote(ctx, eRow, eBeat, '#fe4');
+        drawSmallNote(ctx, eRow, eBeat, '#fe4', true, 'right');
     drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#fe4', 'body');
 }
 
 function drawRendaBig(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd) {
-    drawBigNote(ctx, sRow, sBeat, '#fe4');
+    drawBigNote(ctx, sRow, sBeat, '#fe4', true, 'left');
     if (!omitEnd)
-        drawBigNote(ctx, eRow, eBeat, '#fe4');
+        drawBigNote(ctx, eRow, eBeat, '#fe4', true, 'right');
     drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#fe4', 'bodyBig');
 }
 
 function drawBalloon(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
     if (!omitEnd)
-        drawSmallNote(ctx, eRow, eBeat, '#fb4');
+        drawSmallNote(ctx, eRow, eBeat, '#fb4', true, 'right');
     drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#fb4', 'body');
     drawSmallNote(ctx, sRow, sBeat, '#fb4', false);
 
@@ -150,7 +158,7 @@ function drawBalloon(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
 
 function drawBalloonEx(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
     if (!omitEnd)
-        drawBigNote(ctx, eRow, eBeat, '#fb4');
+        drawBigNote(ctx, eRow, eBeat, '#fb4', true, 'right');
     drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#fb4', 'bodyBig');
     drawBigNote(ctx, sRow, sBeat, '#fb4', false);
 
