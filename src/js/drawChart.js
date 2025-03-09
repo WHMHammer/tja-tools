@@ -167,7 +167,7 @@ function drawBalloonEx(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
     drawPixelText(ctx, x, y + 0.5, count.toString(), '#000');
 }
 
-function drawFuse(ctx, rows, sRow, sBeat, eRow, eBeat, count, omitEnd) {
+function drawFuse(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
     if (!omitEnd)
         drawSmallNote(ctx, eRow, eBeat, '#640aad');
     drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#640aad', 'body');
