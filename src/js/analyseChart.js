@@ -358,7 +358,7 @@ function getStatistics(course) {
             else if (balloonStart) {
                 const balloonLength = note.time - balloonStartTime;
                 const balloonSpeed = balloonCount / balloonLength;
-                balloons.push([balloonLength, balloonCount, balloonType]);
+                balloons.push([balloonLength, balloonCount, balloonType, balloonGogo]);
                 balloonStart = false;
 
                 if (balloonSpeed <= 60) {
