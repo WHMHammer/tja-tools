@@ -52,6 +52,7 @@ const $input = $('.area-editor .input');
 const $errors = $('.area-errors .errors');
 const $rendaHead = $('.renda-head');
 
+let selectedLocale = 'en';
 let tjaParsed = null;
 let selectedDifficulty = '';
 let selectedBranch = 'N';
@@ -138,7 +139,7 @@ function addControlsDiff(difficultyId, headers) {
 
 function listenControlsDiffs() {
     $('.controls-diff .button').on('click', evt => {
-        const diff = $(evt.target).data('value');
+        const diff = $(evt.currentTarget).data('value');
 
         selectedDifficulty = diff;
 
@@ -594,22 +595,22 @@ $input.on('drop', dropEvt => {
 });
 
 $('.controls-branch .button').on('click', evt => {
-    const branch = $(evt.target).data('value');
+    const branch = $(evt.currentTarget).data('value');
 
     selectedBranch = branch;
     updateUI();
 });
 
 $('.controls-page .button').on('click', evt => {
-    const page = $(evt.target).data('value');
+    const page = $(evt.currentTarget).data('value');
 
     selectedPage = page;
     updateUI();
 });
 
 $('.controls-score-system .radio').on('click', evt => {
-    const name = evt.target.name;
-    const value = evt.target.value;
+    const name = evt.currentTarget.name;
+    const value = evt.currentTarget.value;
 
     if (name === 'scoreSystem') {
         selectedScoreSystem = value;
@@ -659,6 +660,12 @@ window.onload = async function() {
 
 $('.btn-unique').on('click', evt => {
     downloadNewUniqueId();
+});
+
+$('.controls-locale input[name=locale]').on('click', evt => {
+    selectedLocale = $(evt.currentTarget).data('value');
+    document.documentElement.setAttribute('lang', selectedLocale);
+    updateUI();
 });
 
 //==============================================================================

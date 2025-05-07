@@ -283,3 +283,29 @@ body {
         }
     }
 }
+
+/***** localization *****/
+
+div.area-footer {
+    display: flex;
+}
+
+div.area-footer > hr {
+  min-height: 100%;
+  max-height: 100vh;
+  margin: 0 auto 0;
+}
+
+.l10n [lang] {
+    padding: 0;
+    margin: 0;
+}
+
+html[lang="en"] .l10n [lang]:not([lang|="en" i]) {
+    display: none;
+}
+
+html[lang="ja"] .l10n [lang]:not([lang|="ja" i]) {
+    display: none;
+}
+
