@@ -107,6 +107,22 @@ export function drawCircle(ctx, x, y, radius, fill) {
     ctx.closePath();
 }
 
+export function drawCircleLeftHalf(ctx, x, y, radius, fill) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, Math.PI / 2, 3 * Math.PI / 2, false);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.closePath();
+}
+
+export function drawCircleRightHalf(ctx, x, y, radius, fill) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, -Math.PI / 2, Math.PI / 2, false);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.closePath();
+}
+
 export function drawRect(ctx, x, y, w, h, fill) {
     ctx.fillStyle = fill;
     ctx.fillRect(x, y, w, h);

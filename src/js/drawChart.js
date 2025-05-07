@@ -1,4 +1,4 @@
-import { drawLine, drawCircle, drawRect, drawText, drawPixelText, drawSprite, drawImageText, initSprites } from './canvasHelper';
+import { drawLine, drawCircle, drawCircleRightHalf, drawRect, drawText, drawPixelText, drawSprite, drawImageText, initSprites } from './canvasHelper';
 import { isRollSymbol, isBalloonSymbol } from './analyseChart';
 import { toFixedZero } from './main';
 import { callFontSetting, getUraSymbol } from './font/font';
@@ -67,31 +67,30 @@ function getNoteCenter(row, beat) {
     };
 }
 
-function drawSmallNote(ctx, row, beat, color, drawInner = true) {
-    const { x, y } = getNoteCenter(row, beat);
+function drawSmallNote(ctx, x, y, color, drawInner = true, side = 'all') {
+    const draw = (side === 'left') ? drawCircleLeftHalf
+        : (side === 'right') ? drawCircleRightHalf
+        : drawCircle;
 
-    drawCircle(ctx, x, y, NOTE_RADIUS, '#2e2e2e');
+    draw(ctx, x, y, NOTE_RADIUS, '#2e2e2e');
 
     if (drawInner) {
-        drawCircle(ctx, x, y, NOTE_RADIUS - 1, '#fff');
-        drawCircle(ctx, x, y, NOTE_RADIUS - 2, color);
+        draw(ctx, x, y, NOTE_RADIUS - 1, '#fff');
+        draw(ctx, x, y, NOTE_RADIUS - 2, color);
     }
     else {
-        drawCircle(ctx, x, y, NOTE_RADIUS - 1, color);
+        draw(ctx, x, y, NOTE_RADIUS - 1, color);
     }
-}
-
-function drawBigNote(ctx, row, beat, color) {
-    const { x, y } = getNoteCenter(row, beat);
-
-    drawCircle(ctx, x, y, NOTE_RADIUS + 3, '#2e2e2e');
-    drawCircle(ctx, x, y, NOTE_RADIUS + 2, '#fff');
-    drawCircle(ctx, x, y, NOTE_RADIUS, color);
 }
 
 function drawNoteSprite(ctx, row, yDelta, beat, type) {
 	const { x, y } = getNoteCenter(row, beat);
-	drawSprite(ctx, x - 12, y - 12 + yDelta, type, 'notes');
+	if (type === 'fuse')
+		drawSmallNote(ctx, x, y + yDelta, '#a4f', false);
+	else if (type === 'fuseEnd')
+		drawSmallNote(ctx, x, y + yDelta, '#640aad', true, 'right');
+	else
+		drawSprite(ctx, x - 12, y - 12 + yDelta, type, 'notes');
 }
 
 //==============================================================================
@@ -252,21 +251,16 @@ function drawLongSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, type) {
 }
 
 function drawRectSprite(ctx, x, y, w, type) {
-	for (let i = 0; i < w; i++) {
-		drawSprite(ctx, x + i, y, type, 'notes');
+	if (type === 'fuseMiddle') {
+		y = y + 12 - NOTE_RADIUS;
+		drawRect(ctx, x, y, w, 2 * NOTE_RADIUS, '#000');
+		drawRect(ctx, x, y + 1, w, 2 * (NOTE_RADIUS - 1), '#fff');
+		drawRect(ctx, x, y + 2, w, 2 * (NOTE_RADIUS - 2), '#640aad');
+	} else {
+		for (let i = 0; i < w; i++) {
+			drawSprite(ctx, x + i, y, type, 'notes');
+		}
 	}
-}
-
-function drawRendaSmall(ctx, rows, sRow, sBeat, eRow, eBeat) {
-	drawSmallNote(ctx, eRow, eBeat, '#ffef43');
-	drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#ffef43', 'body');
-    drawSmallNote(ctx, sRow, sBeat, '#ffef43');
-}
-
-function drawRendaBig(ctx, rows, sRow, sBeat, eRow, eBeat) {
-	drawBigNote(ctx, eRow, eBeat, '#ffef43');
-	drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#ffef43', 'bodyBig');
-    drawBigNote(ctx, sRow, sBeat, '#ffef43');
 }
 
 function drawRendaSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, omitEnd, type) {
@@ -281,15 +275,6 @@ function drawRendaSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, omitEnd, type)
 	}
 	drawLongSprite(ctx, rows, bt, sRow, sBeat, feRow, feBeat, type + 'Middle');
 	drawNoteSprite(ctx, sRow, rows[sRow].branch.indexOf(bt) * 24, sBeat, type + 'Start');
-}
-
-function drawBalloon(ctx, rows, sRow, sBeat, eRow, eBeat, count, imo = false) {
-    drawSmallNote(ctx, eRow, eBeat, '#ffbf43');
-    drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#ffbf43', 'body');
-    drawSmallNote(ctx, sRow, sBeat, '#ffbf43', false);
-
-    const { x, y } = getNoteCenter(sRow, sBeat);
-    drawPixelText(ctx, x, y + 0.5, count.toString(), '#000');
 }
 
 function drawBalloonSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, omitEnd, count, imo = false, spSymbol = 'kusudama') {
@@ -321,14 +306,16 @@ function drawBalloonSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, omitEnd, cou
 	drawImageText(ctx, x - 3 - xDelta, y - 3 + (rows[sRow].branch.indexOf(bt) * 24), count.toString(), 'num');
 }
 
-function drawFuse(ctx, rows, sRow, sBeat, eRow, eBeat, omitEnd, count) {
-    if (!omitEnd)
-        drawSmallNote(ctx, eRow, eBeat, '#640aad');
-    drawLong(ctx, rows, sRow, sBeat, eRow, eBeat, '#640aad', 'body');
-    drawSmallNote(ctx, sRow, sBeat, '#a4f', false);
+function drawFuseSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, omitEnd, count) {
+	if (eRow != undefined && !omitEnd) {
+		drawNoteSprite(ctx, eRow, rows[eRow].branch.indexOf(bt) * 24, eBeat, 'fuseEnd');
+	}
+	drawLongSprite(ctx, rows, bt, sRow, sBeat, eRow, eBeat, 'fuseMiddle');
+	drawNoteSprite(ctx, sRow, rows[sRow].branch.indexOf(bt) * 24, sBeat, 'fuse');
 
-    const { x, y } = getNoteCenter(sRow, sBeat);
-    drawPixelText(ctx, x, y + 0.5, count.toString(), '#fcc');
+	const { x, y } = getNoteCenter(sRow, sBeat);
+	const xDelta = Math.floor((count.toString().length * 6) / 2) - 3
+	drawPixelText(ctx, x, y + 0.5, count.toString(), '#fcc');
 }
 
 //==============================================================================
@@ -870,63 +857,52 @@ export default function (chart, courseId) {
 
 						switch (note) {
 							case '1':
-								//drawSmallNote(ctx, ridx, nBeat, '#ff4242');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'don');
 								break;
 
 							case '2':
-								//drawSmallNote(ctx, ridx, nBeat, '#43c8ff');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'kat');
 								break;
 
 							case '3':
 							case 'A':
-								//drawBigNote(ctx, ridx, nBeat, '#ff4242');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'bigDon');
 								break;
 
 							case '4':
 							case 'B':
-								//drawBigNote(ctx, ridx, nBeat, '#43c8ff');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'bigKat');
 								break;
 
 							case '5':
-								//drawRendaSmall(ctx, rows, ridx, nBeat, longEnd[0], longEnd[1]);
 								drawRendaSprite(ctx, rows, bt, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], 'roll');
 								break;
 
 							case '6':
-								//drawRendaBig(ctx, rows, ridx, nBeat, longEnd[0], longEnd[1]);
 								drawRendaSprite(ctx, rows, bt, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], 'bigRoll');
 								break;
 
 							case '7':
-								//drawBalloon(ctx, rows, ridx, nBeat, longEnd[0], longEnd[1], balloonCount);
 								drawBalloonSprite(ctx, rows, bt, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], balloonCount);
 								break;
 
 							case '9':
-								//drawBalloon(ctx, rows, ridx, nBeat, longEnd[0], longEnd[1], balloonCount, true);
 								drawBalloonSprite(ctx, rows, bt, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], balloonCount, true, chart.headers.spRoll);
 								break;
 
 							case 'C':
-								//drawSmallNote(ctx, ridx, nBeat, '#093e74');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'bomb');
 								break;
 
 							case 'D':
-								drawFuse(ctx, rows, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], balloonCount);
+								drawFuseSprite(ctx, rows, bt, ridx, nBeat, longEnd[0], longEnd[1], longEnd[2], balloonCount);
 								break;
  
 							case 'F':
-								//drawSmallNote(ctx, ridx, nBeat, '#ddd');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'adlib');
 								break;
 
 							case 'G':
-								//drawBigNote(ctx, ridx, nBeat, '#f3f');
 								drawNoteSprite(ctx, ridx, rowYDelta, nBeat, 'purple');
 								break;
 						}
