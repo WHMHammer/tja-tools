@@ -4,15 +4,15 @@ import { isRollSymbol, isBalloonSymbol } from './analyseChart';
 export function difficultyTypeToString(difficultyType) {
     switch (difficultyType) {
         case 0:
-            return 'かんたん'; // 'Easy';
+            return '<span lang="en">Easy</span><span lang="ja">かんたん</span>';
         case 1:
-            return 'ふつう'; // 'Normal';
+            return '<span lang="en">Normal</span><span lang="ja">ふつう</span>';
         case 2:
-            return 'むずかしい'; // 'Hard';
+            return '<span lang="en">Hard</span><span lang="ja">むずかしい</span>';
         case 3:
-            return 'おに'; // 'Oni';
+            return '<span lang="en">Oni</span><span lang="ja">おに</span>';
         case 4:
-            return 'おに裏'; // 'Edit';
+            return '<span lang="en">Edit</span><span lang="ja">おに裏</span>';
     }
     return 'Unknown';
 }

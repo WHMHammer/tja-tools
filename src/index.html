@@ -10,20 +10,20 @@
     <body>
         <section class="pane-left">
             <div class="area is-titled area-editor">
-                <h2 class="title l10n"><span lang="en">Editor (Drag and drop .TJA files)</span><span lang="ja">エディタ (tjaファイルをドラッグ＆ドロップしてください)</span></h2>
+                <h2 class="title l10n"><span lang="en">Editor (Drag and drop a .TJA file)</span><span lang="ja">エディタ (tjaファイルをドラッグ＆ドロップしてください)</span></h2>
                 <div class="controls">
                     <div style="float:left">
-                        <label class="l10n"><span lang="en">Code:</span><span lang="ja">文字コード: </span></label>
-                        <label class="l10n"><input id="charset-auto" type="radio" name="charset" checked><span lang="en">Automatic read</span><span lang="ja">自動認識</span></label>
+                        <label class="l10n"><span lang="en">Encoding:</span><span lang="ja">文字コード: </span></label>
+                        <label class="l10n"><input id="charset-auto" type="radio" name="charset" checked><span lang="en">Auto</span><span lang="ja">自動認識</span></label>
                         <label><input id="charset-utf-8" type="radio" name="charset">UTF-8</label>
                         <label><input id="charset-shift-jis" type="radio" name="charset">Shift-JIS</label>
                         <label><input id="charset-gb18030" type="radio" name="charset">GB18030</label>
-                        <label class="l10n"><input id="editor-live" type="checkbox" checked><span lang="en">Turn on live editing</span><span lang="ja">自動反映を有効にする</span></label>
-                        <label class="l10n"><input id="auto-scroll-to-bottom" type="checkbox"><span lang="en">Automatically scroll down</span><span lang="ja">下へ自動スクロールする</span></label>
-                        <label class="l10n"><input id="embed-donscore" type="checkbox" checked><span lang="en">Embed to donscore</span><span lang="ja">どんすこあ構文を埋め込む</span></label>
+                        <label class="l10n"><input id="editor-live" type="checkbox" checked><span lang="en">Enable live-editing</span><span lang="ja">自動反映を有効にする</span></label>
+                        <label class="l10n"><input id="auto-scroll-to-bottom" type="checkbox"><span lang="en">Auto scroll-to-bottom</span><span lang="ja">下へ自動スクロールする</span></label>
+                        <label class="l10n"><input id="embed-donscore" type="checkbox" checked><span lang="en">Embed Donscore notation</span><span lang="ja">どんすこあ構文を埋め込む</span></label>
                     </div>
                     <div style="float:right">
-                        <button class="editor-process l10n"><span lang="en">Show</span><span lang="ja">反映</span></button>
+                        <button class="editor-process l10n"><span lang="en">Process</span><span lang="ja">反映</span></button>
                     </div>
                 </div>
                 <div class="content">
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="area is-titled area-errors">
-                <h2 class="title l10n"><span lang="en">Error</span><span lang="ja">エラー</span></h2>
+                <h2 class="title l10n"><span lang="en">Errors</span><span lang="ja">エラー</span></h2>
                 <div class="content">
                     <div class="errors"></div>
                 </div>
@@ -39,7 +39,7 @@
             <div class="area area-footer">
                 <a class="source-repo" href="https://github.com/Dannal65535/tja-tools" target="_blank">
                     <img src="https://github.githubassets.com/pinned-octocat.svg">
-                    <label class="l10n"><span lang="en">Repository</span><span lang="ja">リポジトリ</span></label>
+                    <label class="l10n"><span lang="en">Source Repo</span><span lang="ja">リポジトリ</span></label>
                 </a>
                 <hr />
                 <span class="controls-locale">
@@ -64,7 +64,7 @@
                 <div class="page page-statistics">
                     <h3 class="l10n"><span lang="en">Statistics</span><span lang="ja">統計</span></h3>
 					<div class="download-donscore">
-                        <span class="button l10n"><span lang="en">Save Donscore picture</span><span lang="ja">どんすこあ構文を保存</span></span>
+                        <span class="button l10n"><span lang="en">Save Donscore notation</span><span lang="ja">どんすこあ構文を保存</span></span>
 					</div>
                     <h4 class="l10n"><span lang="en">Difficulty</span><span lang="ja">難易度</span></h4>
                     <p><code class="stat-level"></code></p>
@@ -74,12 +74,12 @@
                         <span class="button btn-branch-e is-hidden l10n" data-value='E'><span lang="en">Professional</span><span lang="ja">玄人</span></span>
                         <span class="button btn-branch-m is-hidden l10n" data-value='M'><span lang="en">Master</span><span lang="ja">達人</span></span>
 					</div>
-                    <h4 class="l10n"><span lang="en">Total Combo</span><span lang="ja">最大コンボ数</span></h4>
+                    <h4 class="l10n"><span lang="en">Max Combo</span><span lang="ja">最大コンボ数</span></h4>
                     <p><code class="stat-total-combo"></code></p>
                     <h4 class="l10n"><span lang="en">Score</span><span lang="ja">配点</span></h4>
 					<div class="controls-score-system">
 					<p class="l10n">
-                    <input type="radio" class="radio" name="scoreSystem" value="CS" checked>AC15+<span lang="en">Shinuchi</span><span lang="ja">真打</span>
+                    <input type="radio" class="radio" name="scoreSystem" value="CS" checked>AC15+<span lang="en">Shin-uchi</span><span lang="ja">真打</span>
 					<input type="radio" class="radio" name="scoreSystem" value="AC16Old">AC15+AC16
 					<input type="radio" class="radio" name="scoreSystem" value="AC16New">AC16
 					</p>
@@ -92,18 +92,18 @@
                     <input type="radio" class="radio" name="calcMode" value="predict"><span lang="en">Calculate SCOREINIT and SCOREDIFF</span><span lang="ja">配点を予測する</span>
 					</p>
 					</div>
-                    <p><code class="stat-max-score"></code></p>
-					<p><code class="stat-max-score2"></code></p>
+                    <p><code class="stat-max-score l10n"></code></p>
+					<p><code class="stat-max-score2 l10n"></code></p>
 					<h4>BPM</h4>
                     <p><code class="stat-bpm"></code></p>
-                    <h4 class="l10n"><span lang="en">Perc. of notes</span><span lang="ja">ノーツの割合</span></h4>
+                    <h4 class="l10n"><span lang="en">Ratio of Notes</span><span lang="ja">ノーツの割合</span></h4>
                     <p>
                         <span class="is-color-don l10n">
-                            <span lang="en">Small notes</span><span lang="ja">小</span> <code class="stat-don-small"></code> + <span class="is-size-big"><span lang="en">Big note</span><span lang="ja">大</span> <code class="stat-don-big"></code></span>
+                            <span lang="en">Don</span><span lang="ja">小</span> <code class="stat-don-small"></code> + <span class="is-size-big"><span lang="en">DON</span><span lang="ja">大</span> <code class="stat-don-big"></code></span>
                         </span>
                         /
                         <span class="is-color-kat l10n">
-                            <span lang="en">Small</span><span lang="ja">小</span> <code class="stat-kat-small"></code> + <span class="is-size-big"><span lang="en">Big</span><span lang="ja">大</span> <code class="stat-kat-big"></code></span>
+                            <span lang="en">Ka</span><span lang="ja">小</span> <code class="stat-kat-small"></code> + <span class="is-size-big"><span lang="en">KA</span><span lang="ja">大</span> <code class="stat-kat-big"></code></span>
                         </span>
                         /
                         <span class="is-color-kadon is-size-big l10n">
@@ -131,18 +131,18 @@
                             <code class="stat-mine"></code> <span lang="en">Mines</span><span lang="ja">爆弾</span>
                         </span>
                     </p>
-                    <h4 class="l10n"><span lang="en">Average density</span><span lang="ja">平均密度</span></h4>
+                    <h4 class="l10n"><span lang="en">Average Density</span><span lang="ja">平均密度</span></h4>
                     <p class="l10n">
-                    <code class="stat-density"></code> <span lang="en">hits/s</span><span lang="ja">打/秒</span> (<span lang="en">Song duration</span><span lang="ja">演奏時間</span> <code class="stat-length"></code><span lang="en">s</span><span lang="ja">秒</span> = <code class="stat-formatted-length"></code>)
+                    <code class="stat-density"></code> <span lang="en">hit/s</span><span lang="ja">打/秒</span> (<span lang="en">in</span><span lang="ja">演奏時間</span> <code class="stat-length"></code><span lang="en">s</span><span lang="ja"> 秒</span> = <code class="stat-formatted-length"></code>)
                     </p>
 					<div class="renda-head">
-                        <h4 class="l10n"><span lang="en">Drumroll</span><span lang="ja">連打</span></h4>
-                        <button class="renda-text-copy l10n"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+                        <h4 class="l10n"><span lang="en">Drumrolls</span><span lang="ja">連打</span></h4>
+                        <button class="renda-text-copy l10n"><span lang="en">Copy (Japanese)</span><span lang="ja">コピー</span></button>
 					</div>
                     <p class="l10n">
                         <code class="stat-renda"></code> = <code class="stat-renda-total"></code>
                     </p>
-                    <h4 class="l10n"><span lang="en">Balloon</span><span lang="ja">風船</span></h4>
+                    <h4 class="l10n"><span lang="en">Balloons</span><span lang="ja">風船</span></h4>
                     <p class="l10n"><code class="stat-balloon"></code></p>
                     <h3 class="l10n"><span lang="en">Graph</span><span lang="ja">グラフ</span></h3>
                     <svg class="stat-graph"></svg>

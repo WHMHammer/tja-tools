@@ -131,7 +131,7 @@ function addControlsDiff(difficultyId, headers) {
     if (headers.style > 1) {
         diffName += `-${headers.style}P (P${headers.startPlayer})`;
     }
-    let element = `<span class="button btn-diff-${difficultyId}" data-value='${difficultyId}'>${diffName}</span>`;
+    let element = `<span class="button btn-diff-${difficultyId} l10n" data-value='${difficultyId}'>${diffName}</span>`;
 
     $(`.controls-diff`).append(element);
     $(`.controls-diff`).append(' ');
@@ -336,18 +336,20 @@ function buildStatisticsPage(data) {
             (stats.score.balloonPop[1] * 100);
     }
 
+    const strPts = '<span lang="en"> Points</span><span lang="ja">点</span>';
+    const strRolls = '<span lang="en">Drumrolls</span><span lang="ja">連打</span>';
     if (selectedScoreSystem != 'AC16New') {
-        if (stats.rendas.length) $('.stat-max-score').text(`${scoreInit}点, ${scoreDiff}点 => ${statPotential}点 + 連打`);
-        else $('.stat-max-score').text(`${scoreInit}点, ${scoreDiff}点 => ${statPotential}点`);
+        if (stats.rendas.length) $('.stat-max-score').html(`${scoreInit}${strPts}, ${scoreDiff}${strPts} => ${statPotential}${strPts} + ${strRolls}`);
+        else $('.stat-max-score').html(`${scoreInit}${strPts}, ${scoreDiff}${strPts} => ${statPotential}${strPts}`);
         if (scoreShin != null) {
-            if (stats.rendas.length) $('.stat-max-score2').text(`${scoreShin}点 => ${statPotential2}点 + 連打`);
-            else $('.stat-max-score2').text(`${scoreShin}点 => ${statPotential2}点`);
+            if (stats.rendas.length) $('.stat-max-score2').html(`${scoreShin}${strPts} => ${statPotential2}${strPts} + ${strRolls}`);
+            else $('.stat-max-score2').html(`${scoreShin}${strPts} => ${statPotential2}${strPts}`);
         } else {
             $('.stat-max-score2').text('');
         }
     } else {
-        if (stats.rendas.length) $('.stat-max-score').text(`${scoreInit}点 => ${statPotential}点 + 連打`);
-        else $('.stat-max-score').text(`${scoreInit}点 => ${statPotential}点`);
+        if (stats.rendas.length) $('.stat-max-score').html(`${scoreInit}${strPts} => ${statPotential}${strPts} + ${strRolls}`);
+        else $('.stat-max-score').html(`${scoreInit}${strPts} => ${statPotential}${strPts}`);
         $('.stat-max-score2').text('');
     }
 
@@ -398,10 +400,12 @@ function buildStatisticsPage(data) {
     $('.stat-kat-ratio').text(statKatRatio.toFixed(2) + '%');
     $('.stat-kadon-ratio').text(statKaDonRatio.toFixed(2) + '%');
 
+    const strMin = '<span lang="en">m</span><span lang="ja">分</span>';
+    const strSec = '<span lang="en">s</span><span lang="ja">秒</span>';
     $('.stat-density').text(((stats.totalCombo - 1) / stats.length).toFixed(2));
     $('.stat-length').text(stats.length.toFixed(2));
-    const formatTime = (seconds) => `${Math.floor(seconds / 60)}m${(seconds % 60).toFixed(2).padStart(5, '0')}s`;
-    $('.stat-formatted-length').text(formatTime(stats.length));
+    const formatTime = (seconds) => `${Math.floor(seconds / 60)}${strMin}${(seconds % 60).toFixed(2).padStart(5, '0')}${strSec}`;
+    $('.stat-formatted-length').html(formatTime(stats.length));
 
     const markInGogo = (x => `<span class="is-in-gogo">${x}</span>`);
     const markBig = (x => `<span class="is-size-big">${x}</span>`);
@@ -411,14 +415,16 @@ function buildStatisticsPage(data) {
     $('.stat-renda').html(stats.rendas
          .map((r, i) => (stats.rendaExtends[i].isGoGoRenda ? markInGogo : markNone)(
              (stats.rendaExtends[i].isBigRenda ? markBig : markNone)(
-                 r.toFixed(3) + '秒')))
+                 r.toFixed(3) + strSec)))
          .join(' + '));
-    $('.stat-renda-total').text(stats.rendas.reduce((a, b) => a + b, 0).toFixed(3) + '秒');
+    $('.stat-renda-total').html(stats.rendas.reduce((a, b) => a + b, 0).toFixed(3) + strSec);
 
+    const strHits = '<span lang="en">hit(s)</span><span lang="ja">打</span>';
+    const strHps = '<span lang="en">hit/s</span><span lang="ja">打/秒</span>';
     $('.stat-balloon').html(stats.balloons.map(b => (
         (b[3] ? markInGogo : markNone)(
             ((b[2] === 'balloonEx') ? markEx : markNone)(
-                 `${b[1]}打 / ${b[0].toFixed(3)}秒 = ${(b[1] / b[0]).toFixed(3)} 打/秒${(b[2] === 'fuse') ? " [💣]" : ""}`))
+                 `${b[1]}${strHits} / ${b[0].toFixed(3)}${strSec} = ${(b[1] / b[0]).toFixed(3)} ${strHps}${(b[2] === 'fuse') ? " [💣]" : ""}`))
     )).join('<br>'));
 
     // Graph
