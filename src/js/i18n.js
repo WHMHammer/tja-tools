@@ -14,6 +14,7 @@ const translations = {
         'editor.process': 'Process',
         'editor.download': 'Download',
         'editor.copy': 'Copy',
+        'editor.copy.error': 'Failed to copy text. Please check the security settings of your browser.',
         
         // 错误区域
         'errors.title': 'Errors',
@@ -87,6 +88,7 @@ const translations = {
         'editor.process': '反映',
         'editor.download': '保存',
         'editor.copy': 'コピー',
+        'editor.copy.error': 'テキストのコピーに失敗しました。ブラウザのセキュリティ設定を確認してください。',
         
         // 错误区域
         'errors.title': 'エラー',
@@ -160,6 +162,7 @@ const translations = {
         'editor.process': '处理',
         'editor.download': '下载',
         'editor.copy': '复制',
+        'editor.copy.error': '文本复制失败。请确认浏览器的安全设定。',
         
         // 错误区域
         'errors.title': '错误',

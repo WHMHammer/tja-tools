@@ -589,6 +589,25 @@ function copyRendaText(rendas, rendaExtends) {
 
 //==============================================================================
 
+const download_button = document.getElementById("download_button");
+download_button.addEventListener('click', async () => {
+    const txt = document.getElementById("textarea").value;
+    const title = ((tjaParsed === null) ? null : tjaParsed.headers.title) || 'untitled';
+    downloadjs(txt, `${title}.tja`, 'text/plain;charset=UTF-8');
+});
+
+const copy_button = document.getElementById("copy_button");
+copy_button.addEventListener('click', async () => {
+    try {
+        // テキストをクリップボードに書き込む
+        await navigator.clipboard.writeText(document.getElementById("textarea").value);
+    } catch (err) {
+        // コピーに失敗した場合
+        console.error('Failed to copy text: ', err);
+        alert(t('editor.copy.error'));
+    }
+});
+
 $editorProcess.on('click', () => {
     processTJA();
     showPreview();
