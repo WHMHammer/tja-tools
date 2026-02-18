@@ -349,6 +349,16 @@ function getCourse(tjaHeaders, lines) {
 		roll: {N: null, E: null, M: null},
 	};
 
+    function addEventAt(measure, name, value) {
+        measure.events.push({
+            name: name,
+            position: measureData.length,
+            value: value,
+            branch: currentBranch,
+            branching: branching,
+        });
+    }
+
     function getMeasure(midx) {
         while (midx >= measures.length) {
             let measure = {
@@ -484,6 +494,9 @@ function getCourse(tjaHeaders, lines) {
                 initBalloonHeader();
             }
             let currentMeasure = getMeasure(midxBranchPoint + nBranchMeasures);
+            function addEvent(name, value) {
+                addEventAt(currentMeasure, name, value);
+            }
             switch (line.name) {
                 case 'BRANCHSTART':
 					/*
@@ -510,12 +523,7 @@ function getCourse(tjaHeaders, lines) {
 					nBranchMeasuresMax = nBranchMeasures = 0;
 
 					currentMeasure = getMeasure(midxBranchPoint);
-					currentMeasure.events.push({
-						name: 'branchStart',
-						position: measureData.length,
-						branch: currentBranch,
-						branching: branching,
-					});
+                    addEvent('branchStart');
                     break;
 
                 case 'BRANCHEND':
@@ -527,12 +535,7 @@ function getCourse(tjaHeaders, lines) {
 					nBranchMeasuresMax = nBranchMeasures = 0;
 
 					currentMeasure = getMeasure(midxBranchPoint);
-					currentMeasure.events.push({
-						name: 'branchEnd',
-						position: measureData.length,
-						branch: currentBranch,
-						branching: branching,
-					});
+					addEvent('branchEnd');
                     break;
 
                 case 'N':
@@ -596,97 +599,43 @@ function getCourse(tjaHeaders, lines) {
                             break;
 
                         case 'GOGOSTART':
-                            currentMeasure.events.push({
-                                name: 'gogoStart',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('gogoStart');
                             break;
 
                         case 'GOGOEND':
-                            currentMeasure.events.push({
-                                name: 'gogoEnd',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('gogoEnd');
                             break;
 
                         case 'BARLINEON':
-                            currentMeasure.events.push({
-                                name: 'barlineon',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('barlineon');
                             break;
 
                         case 'BARLINEOFF':
-                            currentMeasure.events.push({
-                                name: 'barlineoff',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('barlineoff');
                             break;
 
                         case 'SCROLL':
-							currentMeasure.events.push({
-								name: 'scroll',
-								position: measureData.length,
-								value: line.value,
-								branch: currentBranch,
-								branching: branching,
-							});
+                            addEvent('scroll', line.value);
                             break;
 
                         case 'BPMCHANGE':
-                            currentMeasure.events.push({
-                                name: 'bpm',
-                                position: measureData.length,
-                                value: line.value,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('bpm', line.value);
                             break;
 
 						case 'MOVEEVENT':
-                            currentMeasure.events.push({
-                                name: 'moveEvent',
-                                position: measureData.length,
-                                value: parseInt(line.value),
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('moveEvent', parseInt(line.value));
                             break;
 
 						case 'COUNTCHANGE':
-                            currentMeasure.events.push({
-                                name: 'countChange',
-                                position: measureData.length,
-                                value: parseInt(line.value),
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('countChange', parseInt(line.value));
                             break;
 
                         case 'AVOIDTEXTON':
-                            currentMeasure.events.push({
-                                name: 'avoidtexton',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('avoidtexton');
                             break;
 
                         case 'AVOIDTEXTOFF':
-                            currentMeasure.events.push({
-                                name: 'avoidtextoff',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('avoidtextoff');
                             break;
 
 						case 'DELAY':
@@ -694,32 +643,16 @@ function getCourse(tjaHeaders, lines) {
                             break;
 
 						case 'SECTION':
-                            currentMeasure.events.push({
-                                name: 'section',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('section');
                             break;
 
 						case 'MOVELINE':
-                            currentMeasure.events.push({
-                                name: 'moveLine',
-                                position: measureData.length,
-								value: parseInt(line.value),
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('moveLine', parseInt(line.value));
                             break;
 
                         case 'TTBREAK':
 						case 'NEWLINE':
-                            currentMeasure.events.push({
-                                name: 'ttBreak',
-                                position: measureData.length,
-								branch: currentBranch,
-								branching: branching,
-                            });
+                            addEvent('ttBreak');
                             break;
 
 						/*
