@@ -82,7 +82,7 @@ You shall then open `webpack-dist/index.html` (not `src/index.html`) with your w
   - [x] `#END`
   - [x] `#MEASURE`
   - [x] `#BPMCHANGE`
-  - [ ] `#DELAY`
+  - [x] `#DELAY` (only for statistics)
   - [x] `#SCROLL`
   - [x] `#GOGOSTART`
   - [x] `#GOGOEND`

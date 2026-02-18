@@ -83,7 +83,7 @@ npm run build
   - [x] `#END`
   - [x] `#MEASURE`
   - [x] `#BPMCHANGE`
-  - [ ] `#DELAY`
+  - [x] `#DELAY`（統計のみ）
   - [x] `#SCROLL`
   - [x] `#GOGOSTART`
   - [x] `#GOGOEND`

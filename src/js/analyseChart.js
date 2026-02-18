@@ -11,6 +11,9 @@ function pulseToTime(events, objects) {
         let event = events[eidx], obj = objects[oidx];
 
         while (event && event.absBeat <= obj.absBeat) {
+            if (event.type === 'delay') {
+                passedTime += event.value;
+            }
             if (event.type === 'bpm') {
                 let beat = event.beat - passedBeat;
                 let time = 60 / bpm * beat;
@@ -106,27 +109,20 @@ function convertToTimed(course, branchType) {
             const event = measure.events[e];
             const eBeat = length / measure.nDivisions * event.position;
 
-            if (event.name === 'bpm') {
-                events.push({
-                    type: 'bpm',
-                    value: event.value,
-                    beat: beat + eBeat,
-                    absBeat: absBeat + Math.abs(eBeat),
-                });
-            }
-            else if (event.name === 'gogoStart') {
-                events.push({
-                    type: 'gogoStart',
-                    beat: beat + eBeat,
-                    absBeat: absBeat + Math.abs(eBeat),
-                });
-            }
-            else if (event.name === 'gogoEnd') {
-                events.push({
-                    type: 'gogoEnd',
-                    beat: beat + eBeat,
-                    absBeat: absBeat + Math.abs(eBeat),
-                });
+            switch (event.name) {
+                case 'bpm':
+                case 'delay':
+                case 'gogoStart':
+                case 'gogoEnd':
+                    events.push({
+                        type: event.name,
+                        value: event.value,
+                        beat: beat + eBeat,
+                        absBeat: absBeat + Math.abs(eBeat),
+                    });
+                    break;
+                default:
+                    break;
             }
         }
 

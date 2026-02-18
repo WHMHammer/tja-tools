@@ -639,7 +639,7 @@ function getCourse(tjaHeaders, lines) {
                             break;
 
 						case 'DELAY':
-                            currentMeasure.properties['delay'] = parseFloat(line.value);
+                            addEvent('delay', parseFloat(line.value));
                             break;
 
 						case 'SECTION':
