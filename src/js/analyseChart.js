@@ -263,6 +263,7 @@ function getStatistics(course) {
         length: end - start,
         rendas: rendas,
 		rendaExtends: rendaExtends,
+        rendaLength: rendas.reduce((a, b) => Math.max(0, a) + Math.max(0, b), 0),
         balloons: balloons,
         score: {
             score: scPotential,
@@ -363,7 +364,7 @@ export function calculateScore(stats, course, scoreInit, scoreDiff, gogoFloor, s
 
 			let scoreRoll = 0;
 			for (let i = 0; i < stats.rendas.length; i++) {
-				scoreRoll += Math.ceil(stats.rendas[i] / rollAC15)
+				scoreRoll += Math.ceil(Math.max(0, stats.rendas[i]) / rollAC15)
 				* rollScore[Number(stats.rendaExtends[i].isGoGoRenda)][Number(stats.rendaExtends[i].isBigRenda)];
 			}
 			return [scoreBasic, scoreRoll]
@@ -377,7 +378,7 @@ export function calculateScore(stats, course, scoreInit, scoreDiff, gogoFloor, s
 
 			let scoreRoll = 0;
 			for (let i = 0; i < stats.rendas.length; i++) {
-				scoreRoll += Math.ceil(stats.rendas[i] / rollAC15)
+				scoreRoll += Math.ceil(Math.max(0, stats.rendas[i]) / rollAC15)
 				* rollScore[0][Number(stats.rendaExtends[i].isBigRenda)];
 			}
 			return [scoreBasic, scoreRoll]
@@ -391,7 +392,7 @@ export function calculateScore(stats, course, scoreInit, scoreDiff, gogoFloor, s
 
 			let scoreRoll = 0;
 			for (let i = 0; i < stats.rendas.length; i++) {
-				scoreRoll += Math.ceil(stats.rendas[i] / rollAC16) * 100;
+				scoreRoll += Math.ceil(Math.max(0, stats.rendas[i]) / rollAC16) * 100;
 			}
 			return [scoreBasic, scoreRoll]
 		}

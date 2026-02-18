@@ -466,14 +466,17 @@ function buildStatisticsPage(data) {
     const markInGogo = (x => `<span class="is-in-gogo">${x}</span>`);
     const markBig = (x => `<span class="is-size-big">${x}</span>`);
     const markEx = (x => `<span class="is-size-ex">${x}</span>`);
+    const markNegative = (x => `(${x})`);
     const markNone = (x => x);
 
     $('.stat-renda').html(stats.rendas
-         .map((r, i) => (stats.rendaExtends[i].isGoGoRenda ? markInGogo : markNone)(
-             (stats.rendaExtends[i].isBigRenda ? markBig : markNone)(
-                 r.toFixed(3) + strSec)))
-         .join(' + '));
-    $('.stat-renda-total').html(stats.rendas.reduce((a, b) => a + b, 0).toFixed(3) + strSec);
+        .map((r, i) => (stats.rendaExtends[i].isGoGoRenda ? markInGogo : markNone)(
+            (stats.rendaExtends[i].isBigRenda ? markBig : markNone)(
+                (r < 0 ? markNegative : markNone)(
+                    r.toFixed(3) + strSec)))
+        )
+        .join(' + '));
+    $('.stat-renda-total').html(stats.rendaLength.toFixed(3) + strSec);
 
     const strHits = t('unit.hits');
     const strHps = t('unit.hps');
@@ -534,11 +537,16 @@ function buildStatisticsPage(data) {
         .call(makeAxisY());
 }
 
-function copyRendaText(rendas, rendaExtends) {
+function copyRendaText(rendas, rendaExtends, rendaLength) {
     let result = '',
         groupCount = 0,
         groupFirst = true;
     const groupMax = rendaExtends.reduce((a, b) => Math.max(a, b.rendaGroup), -1);
+
+    const markNegative = (x => `(${x})`);
+    const markBig = (x => `SIZE(16){${x}}`);
+    const markInGogo = (x => `''${x}''`);
+    const markNone = (x => x);
 
     for (let i = 0; i < rendas.length; i++) {
         if (rendaExtends[i].rendaGroup != groupCount) {
@@ -547,23 +555,9 @@ function copyRendaText(rendas, rendaExtends) {
         }
 
         if (groupFirst) {
-            if (rendaExtends[i].isBigRenda) {
-                result += 'SIZE(16){';
-            }
-
-            if (rendaExtends[i].isGoGoRenda) {
-                result += '\'\'';
-            }
-
-            result += '約' + rendas[i].toFixed(3) + '秒'
-
-            if (rendaExtends[i].isGoGoRenda) {
-                result += '\'\'';
-            }
-
-            if (rendaExtends[i].isBigRenda) {
-                result += '}';
-            }
+            result += ((rendas[i] < 0) ? markNegative : markNone)(
+                (rendaExtends[i].isBigRenda ? markInGogo : markNone)(
+                    '約' + rendas[i].toFixed(3) + '秒'));
 
             let groupNum = rendaExtends.reduce((a, b) => (b.rendaGroup === groupCount ? a + 1 : a), 0);
             if (groupNum > 1) {
@@ -579,7 +573,7 @@ function copyRendaText(rendas, rendaExtends) {
     }
 
     if (rendas.length > 1) {
-        result += '： 合計約' + rendas.reduce((a, b) => a + b, 0).toFixed(3) + '秒';
+        result += '： 合計約' + rendaLength.toFixed(3) + '秒';
     }
 
     if (result != '') {
@@ -627,7 +621,7 @@ $rendaHead.on('click', () => {
         statistics: stats,
         graph
     } = data;
-    copyRendaText(stats.rendas, stats.rendaExtends);
+    copyRendaText(stats.rendas, stats.rendaExtends, stats.rendaLength);
 });
 
 $input.on('input', () => {
